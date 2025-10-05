@@ -1,0 +1,95 @@
+version: '3.5'
+volumes:
+  happy_condo_local_postgres_data: { }
+  happy_condo_local_postgres_data_backups: { }
+  happy_condo_odoo-web-data: { }
+  happy_condo_odoo-db-data: { }
+  happy_condo_local_redis_data: { }
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: happy_condo_local_django
+    container_name: happy_condo_local_django
+    # user: "1000:1000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: happy_condo_production_postgres
+    container_name: happy_condo_local_postgres
+    volumes:
+      - happy_condo_local_postgres_data:/var/lib/postgresql/data
+      - happy_condo_local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+    ports:
+      - '5432:5432'
+
+  redis:
+    image: docker.io/redis:6
+    container_name: happy_condo_local_redis
+
+    volumes:
+      - happy_condo_local_redis_data:/data
+
+  celeryworker:
+    <<: *django
+    image: happy_condo_local_celeryworker
+    container_name: happy_condo_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: [ ]
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: happy_condo_local_celerybeat
+    container_name: happy_condo_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+    ports: [ ]
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: happy_condo_local_flower
+    container_name: happy_condo_local_flower
+    ports:
+      - '5555:5555'
+    command: /start-flower
+
+
+  odoo:
+    build:
+      context: .
+      dockerfile: ./compose/local/odoo/Dockerfile
+    image: happy_condo_oddo
+    container_name: happy_condo_oddo
+    platform: linux/amd64
+    env_file:
+      - ./.envs/.local/.postgres
+    depends_on:
+      - postgres
+    ports:
+      - '8879:8069'
+      - '8888:3001'
+    volumes:
+      - happy_condo_odoo-web-data:/var/lib/odoo
+      - ./extra-addons:/mnt/extra-addons
