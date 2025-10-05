@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2025-10-05
+
+### 🛡️ Dependencies
+
+- Tic-2 Update requirements. Luis C. Berrocal
+
 ## [0.1.0] - 2025-10-05
 
 ### 📚 Documentation
