@@ -4,7 +4,7 @@ services:
     container_name: code_review_test_project_local_docs
     build:
       context: .
-      dockerfile: ./compose/local/docs/Dockerfile
+      dockerfile: compose/uv/local/docs/Dockerfile
     env_file:
       - ./.envs/.local/.django
     volumes:

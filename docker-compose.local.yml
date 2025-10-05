@@ -7,7 +7,7 @@ services:
   django: &django
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
+      dockerfile: compose/uv/local/django/Dockerfile
     image: code_review_test_project_local_django
     container_name: code_review_test_project_local_django
     depends_on:
@@ -26,7 +26,7 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
+      dockerfile: compose/uv/production/postgres/Dockerfile
     image: code_review_test_project_production_postgres
     container_name: code_review_test_project_local_postgres
     volumes:
