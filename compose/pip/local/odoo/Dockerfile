@@ -2,12 +2,12 @@ FROM odoo:16.0
 
 USER root
 
-# COPY ./compose/local/odoo/etc/odoo.conf /etc/odoo/odoo.conf
+# COPY ./compose/pip/local/odoo/etc/odoo.conf /etc/odoo/odoo.conf
 # Copy template config odoo file
-COPY ./compose/local/odoo/etc/odoo.conf /etc/odoo/odoo.conf.template
+COPY ./compose/pip/local/odoo/etc/odoo.conf /etc/odoo/odoo.conf.template
 
 
-COPY ./compose/local/odoo/etc/requirements.txt /etc/odoo/requirements.txt
+COPY ./compose/pip/local/odoo/etc/requirements.txt /etc/odoo/requirements.txt
 
 RUN chown odoo:odoo /etc/odoo
 

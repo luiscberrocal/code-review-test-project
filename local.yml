@@ -1,18 +1,17 @@
-version: '3.5'
 volumes:
-  happy_condo_local_postgres_data: { }
-  happy_condo_local_postgres_data_backups: { }
-  happy_condo_odoo-web-data: { }
-  happy_condo_odoo-db-data: { }
-  happy_condo_local_redis_data: { }
+  code_review_pip_local_postgres_data: { }
+  code_review_pip_local_postgres_data_backups: { }
+  code_review_pip_odoo-web-data: { }
+  code_review_pip_odoo-db-data: { }
+  code_review_pip_local_redis_data: { }
 
 services:
   django: &django
     build:
       context: .
       dockerfile: compose/pip/local/django/Dockerfile
-    image: happy_condo_local_django
-    container_name: happy_condo_local_django
+    image: code_review_pip_local_django
+    container_name: code_review_pip_local_django
     # user: "1000:1000"
     depends_on:
       - postgres
@@ -30,11 +29,11 @@ services:
     build:
       context: .
       dockerfile: compose/pip/production/postgres/Dockerfile
-    image: happy_condo_production_postgres
-    container_name: happy_condo_local_postgres
+    image: code_review_pip_production_postgres
+    container_name: code_review_pip_local_postgres
     volumes:
-      - happy_condo_local_postgres_data:/var/lib/postgresql/data
-      - happy_condo_local_postgres_data_backups:/backups
+      - code_review_pip_local_postgres_data:/var/lib/postgresql/data
+      - code_review_pip_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
     ports:
@@ -42,15 +41,15 @@ services:
 
   redis:
     image: docker.io/redis:6
-    container_name: happy_condo_local_redis
+    container_name: code_review_pip_local_redis
 
     volumes:
-      - happy_condo_local_redis_data:/data
+      - code_review_pip_local_redis_data:/data
 
   celeryworker:
     <<: *django
-    image: happy_condo_local_celeryworker
-    container_name: happy_condo_local_celeryworker
+    image: code_review_pip_local_celeryworker
+    container_name: code_review_pip_local_celeryworker
     depends_on:
       - redis
       - postgres
@@ -59,8 +58,8 @@ services:
 
   celerybeat:
     <<: *django
-    image: happy_condo_local_celerybeat
-    container_name: happy_condo_local_celerybeat
+    image: code_review_pip_local_celerybeat
+    container_name: code_review_pip_local_celerybeat
     depends_on:
       - redis
       - postgres
@@ -69,8 +68,8 @@ services:
 
   flower:
     <<: *django
-    image: happy_condo_local_flower
-    container_name: happy_condo_local_flower
+    image: code_review_pip_local_flower
+    container_name: code_review_pip_local_flower
     ports:
       - '5555:5555'
     command: /start-flower
@@ -80,8 +79,8 @@ services:
     build:
       context: .
       dockerfile: compose/pip/local/odoo/Dockerfile
-    image: happy_condo_oddo
-    container_name: happy_condo_oddo
+    image: code_review_pip_odoo
+    container_name: code_review_pip_odoo
     platform: linux/amd64
     env_file:
       - ./.envs/.local/.postgres
@@ -91,5 +90,5 @@ services:
       - '8879:8069'
       - '8888:3001'
     volumes:
-      - happy_condo_odoo-web-data:/var/lib/odoo
+      - code_review_pip_odoo-web-data:/var/lib/odoo
       - ./extra-addons:/mnt/extra-addons
