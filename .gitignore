@@ -275,3 +275,4 @@ code_review_test_project/media/
 .ipython/
 .env
 .envs/*
+.idea
